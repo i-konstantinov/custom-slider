@@ -1,0 +1,380 @@
+@let info = gaugeInfo();
+@let opts = options();
+@let humidity = info.thermostatHumidityControl;
+@let size = frameSize();
+@let diameter = scalledDiameter();
+
+<div [class]="['component-container', hostView()]">
+  <div
+    [id]="'arc-' + gaugeId()"
+    class="arc-slider"
+    [style]="{ width: diameter + 'px', height: diameter + 'px' }"
+  >
+  
+    @if (hostView() === 'controls-view') {
+      <div class="controls-info">
+        <div class="function-info">
+          @if (info.showWaves) {
+            <div class="inner-container">
+              <span
+                [class]="[
+                  'label',
+                  'regular-text',
+                  'text-med-color',
+                  size !== 'S' ? 'm-size-text' : 'xs-size-text',
+                ]"
+              >
+                {{ info.functionLabel }}
+              </span>
+              <span
+                [class]="[
+                  info.functionIconClass,
+                  info.functionIconSecondaryClass,
+                  info.functionIconColorClass,
+                  size !== 'S' ? 'large' : 'small',
+                ]"
+              ></span>
+            </div>
+          }
+        </div>
+        <div class="waves-svg-container">
+          @if (windowWidth() < 601 && info.showWaves) {
+            <div class="inner-container">
+              @for (side of ['left', 'right']; track side) {
+                <div
+                  class="waves-sm-img"
+                  [style]="{
+                    transform:
+                      'scale(' +
+                      (size !== 'S' ? 1 : 0.75) +
+                      ') translate(0, -' +
+                      (size !== 'S' ? 0.1 : 0.75) +
+                      'rem)',
+                  }"
+                >
+                  @if (info.wavesActivityClass === 'active') {
+                    <img [src]="'assets/dynamic/activity-waves/' + side + '-sm.svg'" alt="" />
+                  } @else {
+                    <img [src]="'assets/activity-waves/' + side + '-inactive-sm.svg'" alt="" />
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <div
+          class="target-value-container"
+          [style]="{ transform: 'translateY(' + (humidity ? 50 : 30) + 'px)' }"
+        >
+          <div class="main-target-container">
+            @if (isActive()) {
+              <span
+                class="target-label regular-text text-med-color"
+                [class]="size === 'S' ? 'xs-size-text' : 's-size-text'"
+                [style]="{ transform: 'translateY(' + (size !== 'L' ? 10 : 0) + 'px)' }"
+                >{{ info.targetPrefixLabel }}</span
+              >
+            }
+            <span
+              [class]="[
+                'current-precised-value',
+                'semi-bold-text',
+                info.targetLabelColor,
+                size === 'S' ? 'small' : 'large',
+              ]"
+              [style]="{ transform: 'translateY(' + (size !== 'L' ? 8 : 0) + 'px)' }"
+              >{{ isActive() ? precisedValue() + opts.symbol : 'device off' }}</span
+            >
+          </div>
+          @if (humidity) {
+            <div
+              class="thermostat-humidity-control-target"
+              [style]="{ transform: 'translateY(' + (size !== 'L' ? 6 : 0) + 'px)' }"
+            >
+              <span class="icon-humidifying arc-slider-target-primary"></span>
+              @if (humidity.limited) {
+                <div class="value-container">
+                  <span
+                    class="value regular-text warn-color"
+                    [class]="size === 'S' ? 's-size-text' : 'm-size-text'"
+                  >
+                    Limited
+                  </span>
+                </div>
+              } @else {
+                <div class="value-container">
+                  <span
+                    class="sign regular-text text-med-color"
+                    [class]="size === 'S' ? 's-size-text' : 'm-size-text'"
+                  >
+                    {{ humidity.signLabel }}
+                  </span>
+                  <span
+                    class="value regular-text text-med-color"
+                    [class]="size === 'S' ? 'xs-size-text' : 's-size-text'"
+                  >
+                    {{ humidity.setPointLabel }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (hostView() === 'set-boost-view') {
+      <div class="boost-info">
+        <div
+          class="function-info"
+          [style]="{
+            transform: 'translateY(' + (size === 'L' ? 0 : size === 'M' ? 0.5 : 0.75) + 'rem)',
+          }"
+        >
+          <div class="inner-container">
+            <span
+              [class]="[
+                'label',
+                'regular-text',
+                'text-med-color',
+                size !== 'S' ? 'm-size-text' : 's-size-text',
+              ]"
+            >
+              {{ info.functionLabel }}
+            </span>
+            <span
+              [class]="[
+                info.functionIconClass,
+                info.functionIconColorClass,
+                info.functionIconSecondaryClass,
+                size !== 'S' ? 'large' : 'small',
+              ]"
+            ></span>
+          </div>
+        </div>
+        <div class="controlling-reading-container" [style]="{ transform: 'translateY(-0.5rem)' }">
+          <div class="inner-container">
+            <span class="label regular-text text-med-color m-size-text">{{
+              'Gauge Info'
+            }}</span>
+            <span class="xxl-size-text semi-bold-text text-dark-color">{{ opts.info }}</span>
+          </div>
+        </div>
+        <div
+          class="target-value-container"
+          [style]="{
+            transform:
+              'scale(' +
+              (size === 'L' ? 1 : 0.85) +
+              ') translateY(' +
+              (size !== 'L' ? 3 : -0.5) +
+              'rem)',
+          }"
+        >
+          <span class="target-label regular-text m-size-text text-med-color">
+            {{ boostOn() ? 'Boost To' : 'Target' }}
+          </span>
+          <span [class]="['current-precised-value', 'semi-bold-text', info.targetLabelColor]">
+            {{ precisedValue() + opts.symbol }}
+          </span>
+        </div>
+      </div>
+    }
+
+    @if (hostView() === 'set-period-view') {
+      <div class="period-info">
+        <div class="target-value-container" [style]="{ transform: 'translateY(2.25rem)' }">
+          @if (isActive()) {
+            <span class="target-label regular-text s-size-text text-med-color">{{
+              'Target'
+            }}</span>
+          }
+          <span [class]="['current-precised-value', 'semi-bold-text', info.targetLabelColor]">
+            {{ isActive() ? precisedValue() + opts.symbol : 'Off' }}
+          </span>
+        </div>
+      </div>
+    }
+
+    @if (hostView() === 'settings-view-hysteresis' || hostView() === 'set-sensor-calibration') {
+      <div class="hysteresis-info">
+        <div class="inner-container" [style]="{ transform: 'translateY(0rem)' }">
+          <span [class]="['xl-size-text', 'semi-bold-text', info.valueColorClass]">
+            {{ precisedValue() + opts.symbol }}</span
+          >
+        </div>
+      </div>
+    }
+
+    <canvas
+      #backgroundCanvas
+      class="background-canvas"
+      [width]="frameDiameter()"
+      [height]="frameDiameter()"
+      [style]="{
+        transform: 'scale(' + scaleFactor + ') translate(-' + diameter + 'px, -' + diameter + 'px)',
+      }"
+    ></canvas>
+    <canvas
+      #mainCanvas
+      class="main-canvas"
+      [width]="frameDiameter()"
+      [height]="frameDiameter()"
+      [style]="{
+        transform: 'scale(' + scaleFactor + ') translate(-' + diameter + 'px, -' + diameter + 'px)',
+      }"
+      (pointerdown)="onPointerDown($event)"
+      (pointermove)="onPointerMove($event)"
+      (pointerup)="onPointerUp()"
+      (pointercancel)="onPointerUp()"
+    ></canvas>
+  </div>
+
+  <!--UNTIL-->
+  @if (hostView() === 'controls-view' && until()) {
+    <div class="duration-label-container">
+      <span
+        class="regular-text text-med-color"
+        [class]="size === 'S' ? 'xxs-size-text' : 'xs-size-text'"
+        [style]="{ transform: 'translateY(' + (humidity ? 40 : 20) + 'px)' }"
+        >{{ until() }}</span
+      >
+    </div>
+  }
+
+  <div class="control-btns">
+    <!--MINUS-->
+    <div
+      class="fine-control-btn"
+      [style]="{
+        transform: 'translate(0, ' + (hostView() === 'set-period-view' ? 2 : -0.75) + 'rem)',
+      }"
+    >
+      <!-- <app-button
+        name="general"
+        type="SEC"
+        icon="gauge-minus"
+        width="45px"
+        height="45px"
+        [color]="fineControls().minus.color"
+        (pointerdown)="onControlBtn('minus')"
+        [cursor]="minusDisabled() ? 'default' : 'pointer'"
+      ></app-button> -->
+    </div>
+    <!--SCHEDULE-->
+    @if (hostView() === 'controls-view') {
+      <div
+        class="mode-btn schedule"
+        [style]="{
+          transform: 'translate(12px, -' + diameter * (size !== 'M' ? 0.35 : 0.33) + 'px)',
+        }"
+      >
+        <!-- <app-button
+          name="app-btn"
+          icon="schedule-btn"
+          [fontSize]="size === 'L' ? '38px' : size === 'M' ? '36px' : '32px'"
+          [color]="relayMode() === 'SCHEDULE' && !boostOn() ? modeBtnsColor() : 'accent'"
+          (pointerdown)="onModeBtn('SCHEDULE')"
+        ></app-button> -->
+      </div>
+    }
+
+    <!--POWER-->
+    @if (hostView() === 'controls-view') {
+      <div
+        class="pwr-btn-container"
+        [style]="{
+          transform:
+            'translate(-0.1rem, -' +
+            diameter * (size === 'L' ? 0.56 : size === 'M' ? 0.58 : 0.6) +
+            'px)',
+        }"
+      >
+        <!-- <app-button
+          (pointerdown)="onPowerBtn()"
+          name="general"
+          icon="pwr-btn"
+          fontSize="36px"
+          width="55px"
+          height="55px"
+          type="PRIM"
+        ></app-button> -->
+      </div>
+    }
+    @if (hostView() === 'set-period-view') {
+      <div
+        class="pwr-btn-container"
+        [style]="{ transform: 'translate(0, -' + diameter * (size === 'L' ? 0.45 : 0.425) + 'px)' }"
+      >
+        <!-- <app-button
+          (pointerdown)="onPowerBtn()"
+          name="general"
+          icon="pwr-btn"
+          fontSize="36px"
+          width="55px"
+          height="55px"
+          type="PRIM"
+        ></app-button> -->
+      </div>
+    }
+    <!--MANUAL-->
+    @if (hostView() === 'controls-view') {
+      <div
+        class="mode-btn manual"
+        [style]="{
+          transform: 'translate(-14px, -' + diameter * (size !== 'M' ? 0.345 : 0.325) + 'px)',
+        }"
+      >
+        <!-- <app-button
+          name="app-btn"
+          icon="manual-btn"
+          [fontSize]="size === 'L' ? '33px' : size === 'M' ? '31px' : '27px'"
+          [color]="relayMode() === 'MANUAL' && !boostOn() ? modeBtnsColor() : 'accent'"
+          (pointerdown)="onModeBtn('MANUAL')"
+        ></app-button> -->
+      </div>
+    }
+    <!--PLUS-->
+    <div
+      class="fine-control-btn"
+      [style]="{
+        transform: 'translate(0, ' + (hostView() === 'set-period-view' ? 2 : -0.75) + 'rem)',
+      }"
+    >
+      <!-- <app-button
+        name="general"
+        type="SEC"
+        icon="gauge-plus"
+        [color]="fineControls().plus.color"
+        width="45px"
+        height="45px"
+        (pointerdown)="onControlBtn('plus')"
+        [cursor]="plusDisabled() ? 'default' : 'pointer'"
+      ></app-button> -->
+    </div>
+
+    <!--Current Mode-->
+    @if (hostView() === 'controls-view' && !boostOn()) {
+      <div class="current-mode-label-container">
+        <span
+          [class]="[
+            'regular-text',
+            size !== 'S' ? 'xxs-size-text' : 'xxxs-size-text',
+            'text-med-color',
+          ]"
+          [style]="{
+            position: 'absolute',
+            transform: 'translate(0, -' + diameter * (size !== 'S' ? 0.37 : 0.42) + 'px)',
+          }"
+          >{{
+            relayMode() === 'MANUAL'
+              ? 'Manual'
+              : relayMode() === 'SCHEDULE'
+                ? 'Schedule'
+                : ''
+          }}</span
+        >
+      </div>
+    }
+  </div>
+</div>

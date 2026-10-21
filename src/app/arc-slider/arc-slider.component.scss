@@ -1,0 +1,349 @@
+
+.component-container {
+    width: fit-content;
+    height: fit-content;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto 50px;
+    z-index: 10;
+
+    .arc-slider {
+        grid-row: 1/ span 1;
+        grid-column: 1/ span 1;
+        display: grid;
+        place-content: center;
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
+        transition: 0.25s;
+        background-color: transparent;
+
+        .controls-info,
+        .boost-info,
+        .period-info,
+        .hysteresis-info {
+            grid-column: 1/1;
+            grid-row: 1/1;
+            display: flex;
+            flex-flow: row wrap;
+            background-color: transparent;
+        }
+
+        .controls-info {
+            .function-info,
+            .target-value-container,
+            .waves-svg-container {
+                flex-basis: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: center;
+                user-select: none;
+            }
+
+            .function-info {
+                height: 35%;
+                align-items: flex-end;
+                align-content: flex-end;
+
+                .inner-container {
+                    flex-basis: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+
+                    .label {
+                        flex-basis: 100%;
+                        display: flex;
+                        justify-content: center;
+                        margin-bottom: 5px;
+                    }
+
+                    .drop.large,
+                    .sun.large,
+                    .flame.large {
+                        font-size: 30px;
+                    }
+                    .snow.large {
+                        font-size: 28px;
+                    }
+
+                    .drop.small,
+                    .sun.small,
+                    .flame.small {
+                        font-size: 20px;
+                    }
+
+                    .snow.small {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+            .target-value-container {
+                height: 28%;
+                align-items: flex-end;
+                align-content: flex-end;
+
+                .main-target-container{
+                    flex-basis: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+
+                    .target-label {
+                        flex-basis: 100%;
+                        display: flex;
+                        justify-content: center;
+                    }
+    
+                    .current-precised-value.large {
+                        font-size: 32px;
+                    }
+                    .current-precised-value.small {
+                        font-size: 30px;
+                    }
+                }
+
+                .thermostat-humidity-control-target {
+                    flex-basis: 100%;
+                    display: flex;
+                    gap: 0 4px;
+                    align-items: center;
+                    justify-content: center;
+
+                    .icon-humidifying {
+                        font-size: 16px;
+                        transform: translateY(-2px);
+                    }
+
+                    .value-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 4px;                        
+                    }
+
+                }
+            }
+
+            .waves-svg-container {
+                height: 37%;
+                align-items: flex-start;
+                .inner-container {
+                    display: flex;
+                    gap: 60px;
+                }
+            }
+        }
+
+        .boost-info {
+
+            .function-info,
+            .controlling-reading-container,
+            .target-value-container {
+                flex-basis: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: center;
+                user-select: none;
+            }
+
+            .function-info {
+                height: 47%;
+                align-items: center;
+                align-content: center;
+
+                .inner-container {
+                    flex-basis: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    padding-top: 5px;
+
+                    .label {
+                        flex-basis: 100%;
+                        display: flex;
+                        justify-content: center;
+                        margin-bottom: 5px;
+                    }
+
+                    .drop.large,
+                    .sun.large,
+                    .flame.large {
+                        font-size: 30px;
+                    }
+                    .snow.large {
+                        font-size: 28px;
+                    }
+
+                    .drop.small,
+                    .sun.small,
+                    .flame.small {
+                        font-size: 20px;
+                    }
+
+                    .snow.small {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+            .controlling-reading-container {
+                height: 28%;
+                align-content: flex-start;
+
+
+                .inner-container {
+                    flex-basis: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+
+                    .label {
+                        flex-basis: 100%;
+                        display: flex;
+                        justify-content: center;
+                        margin-bottom: 3px;
+                    }
+                }
+            }
+
+            .target-value-container {
+                height: 25%;
+                align-items: flex-end;
+                align-content: flex-end;
+
+                .target-label {
+                    flex-basis: 100%;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .current-precised-value {
+                    font-size: 32px;
+                }
+            }
+        }
+
+        .period-info {
+
+            .target-value-container {
+                flex-basis: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: center;
+                align-items: flex-end;
+                align-content: flex-end;
+                user-select: none;
+
+                .target-label {
+                    flex-basis: 100%;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .current-precised-value {
+                    font-size: 32px;
+                }
+            }
+        }
+
+        .hysteresis-info {
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        canvas {
+            grid-column: 1/1;
+            grid-row: 1/1;
+            cursor: pointer;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .background-canvas {
+            z-index: 11;
+        }
+
+        .main-canvas {
+            z-index: 12;
+        }
+    }
+
+    .duration-label-container {
+        grid-row: 2/ span 1;
+        grid-column: 1/ span 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .control-btns {
+        grid-row: 2/ span 1;
+        grid-column: 1/ span 1;
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .fine-control-btn {
+            flex-basis: 20%;
+            display: flex;
+            justify-content: center;
+            z-index: 13;
+            user-select: none;
+        }
+
+        .pwr-btn-container,
+        .mode-btn {
+            z-index: 13;
+            user-select: none;
+        }
+
+        .current-mode-label-container {
+            flex-basis: 100%;
+            display: flex;
+            justify-content: center;
+
+            span {
+                flex-basis: 25%;
+                max-width: 25%;
+                display: flex;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+    }
+}
+
+.component-container.set-period-view {
+    .arc-slider {
+        grid-row: 1/ span 2;
+        grid-column: 1/ span 1;
+    }
+    .control-btns {
+        grid-row: 2/ span 1;
+        grid-column: 1/ span 1;
+        display: flex;
+        justify-content: space-between;
+
+        .fine-control-btn {
+            flex-basis: 20%;
+            display: flex;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .pwr-btn-container {
+            z-index: 12;
+            user-select: none;
+        }
+    }
+} 
+
+.component-container.set-period-view {
+    .arc-slider {
+        grid-row: 1/ span 2;
+    }
+}
