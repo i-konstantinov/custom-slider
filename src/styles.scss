@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  padding: 0;
+    background: url('app/assets/abstract.jpg') center / cover repeat;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+}
