@@ -8,7 +8,7 @@ import { ArcSlider, IArcSliderBaseColors, IArcSliderDisplayData, IGaugeFineContr
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('custom-slider');
+  protected readonly isActive = signal(true);
   fineControls: IGaugeFineControls = {
     minus: {
       color: 'accent',
@@ -21,8 +21,8 @@ export class App {
   };
   displayData: IArcSliderDisplayData = {
     handleColor: '#a5a5a5',
-    showWaves: true,
-    wavesActivityClass: 'active',
+    showWaves: false,
+    wavesActivityClass: 'inactive',
     functionLabel: 'Function',
     functionIconClass: 'function-icon',
     functionIconSecondaryClass: 'function-icon-secondary',
@@ -36,16 +36,21 @@ export class App {
     min: 0,
     max: 100,
     value: 35,
-    precision: 0,
-    symbol: '°C',
+    precision: 1,
+    // symbol: '°C',
+    symbol: '%',
     startColor: '#1976d2',
     stopColor: '#d32f2f',
     info: 'Temperature',
-    controlReadingValue: 35,
+    controlReadingValue: 5,
   };
   baseColors: IArcSliderBaseColors = {
     primary: '#1976d2',
     warn: '#d32f2f',
     accent: '#dbdbdb',
   };
+
+  protected onPowerBtn(): void {
+    this.isActive.update((active) => !active);
+  }
 }

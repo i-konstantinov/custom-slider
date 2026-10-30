@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import {
   afterRenderEffect,
   Component,
@@ -129,10 +130,10 @@ const SIZE_PRESETS: Record<VisualFrameDiameter, ISizePreset> = {
 
 /** [window width the view must exceed, frame size to use], checked in order */
 const CONTROLS_VIEW_BREAKPOINTS: readonly (readonly [number, VisualFrameDiameter])[] = [
-  [1620, 438],
-  [1300, 338],
-  [1220, 438],
-  [1080, 338],
+  // [1620, 438],
+  // [1300, 338],
+  // [1220, 438],
+  // [1080, 338],
   [700, 438],
   [440, 338],
 ];
@@ -183,6 +184,7 @@ function getVisualFrameDiameter(
   selector: 'app-arc-slider',
   templateUrl: './arc-slider.component.html',
   styleUrl: './arc-slider.component.scss',
+  imports: [NgOptimizedImage],
   host: {
     '(window:resize)': 'onResize()',
   },
