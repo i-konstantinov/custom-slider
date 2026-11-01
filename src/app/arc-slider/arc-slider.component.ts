@@ -39,26 +39,9 @@ export interface IGaugeOutput {
   color: string;
 }
 
-export interface IGaugeFineControl {
-  disabled: boolean;
-  color: string;
-}
-
-export interface IGaugeFineControls {
-  minus: IGaugeFineControl;
-  plus: IGaugeFineControl;
-}
-
-export interface IThermostatHumidityControl {
-  limited?: boolean;
-  signLabel?: string;
-  setPointLabel?: string;
-}
 
 export interface IArcSliderDisplayData {
   handleColor: string;
-  showWaves: boolean;
-  wavesActivityClass: 'active' | 'inactive';
   functionLabel: string;
   functionIconClass: string;
   functionIconSecondaryClass: string;
@@ -66,7 +49,6 @@ export interface IArcSliderDisplayData {
   targetPrefixLabel: string;
   targetLabelColor: string;
   valueColorClass: string;
-  thermostatHumidityControl?: IThermostatHumidityControl;
 }
 
 export interface IArcSliderBaseColors {
@@ -75,12 +57,6 @@ export interface IArcSliderBaseColors {
   accent: string;
 }
 
-export type ArcSliderHostView =
-  | 'controls-view'
-  | 'set-boost-view'
-  | 'set-period-view'
-  | 'set-sensor-calibration'
-  | 'settings-view-hysteresis';
 
 type VisualFrameDiameter = 438 | 338 | 288;
 
@@ -160,24 +136,14 @@ const CR_INDICATOR_COLOR = '#f2f2f2';
 
 const OUTPUT_COLOR = '#808080';
 const FINE_CONTROLS_DEBOUNCE_MS = 1200;
-const SMALL_MODAL_MAX_WIDTH = 540;
+// const SMALL_MODAL_MAX_WIDTH = 540;
 
 const toRadians = (degrees: number) => degrees * (Math.PI / 180);
 
 function getVisualFrameDiameter(
-  hostView: ArcSliderHostView,
   windowWidth: number,
 ): VisualFrameDiameter {
-  switch (hostView) {
-    case 'controls-view':
-      return CONTROLS_VIEW_BREAKPOINTS.find(([minWidth]) => windowWidth > minWidth)?.[1] ?? 288;
-    case 'set-boost-view':
-    case 'set-period-view':
-    case 'set-sensor-calibration':
-      return windowWidth < 480 ? 288 : windowWidth < 600 ? 338 : 438;
-    case 'settings-view-hysteresis':
-      return 288;
-  }
+  return CONTROLS_VIEW_BREAKPOINTS.find(([minWidth]) => windowWidth > minWidth)?.[1] ?? 288;
 }
 
 @Component({
@@ -191,24 +157,15 @@ function getVisualFrameDiameter(
 })
 export class ArcSlider {
   private readonly document = inject(DOCUMENT);
-
-  readonly modeBtnsColor = input('');
-  readonly fineControls = input.required<IGaugeFineControls>();
   readonly gaugeInfo = input.required<IArcSliderDisplayData>();
   readonly options = input.required<IGaugeOptions>();
   readonly isActive = input(true);
-  readonly boostOn = input(false);
-  readonly hostView = input.required<ArcSliderHostView>();
   readonly gaugeId = input(1);
-  readonly relayMode = input<string | null>();
-  readonly relayType = input('THERMOSTAT');
   readonly baseColors = input.required<IArcSliderBaseColors>();
-  readonly until = input<string | null>(null);
   readonly waitingForCmdResponse = input(false);
 
   readonly arcSliderOutput = output<IGaugeOutput>();
   readonly powerBtnEvent = output<void>();
-  readonly changeModeEvent = output<string>();
 
   private readonly backgroundCanvas =
     viewChild.required<ElementRef<HTMLCanvasElement>>('backgroundCanvas');
@@ -225,9 +182,6 @@ export class ArcSlider {
   private readonly minScale = computed(() => this.options().min);
   private readonly maxScale = computed(() => this.options().max);
   private readonly precision = computed(() => (this.options().precision === 1 ? 1 : 0));
-  private readonly isModal = computed(
-    () => this.hostView() === 'set-boost-view' || this.hostView() === 'set-period-view',
-  );
 
   /**
    * Follows `options().value`, except while the user is dragging or using the fine
@@ -243,14 +197,14 @@ export class ArcSlider {
     Number(this.gaugeValue().toFixed(this.precision())),
   );
   protected readonly minusDisabled = computed(
-    () => this.fineControls().minus.disabled || this.precisedValue() <= this.minScale(),
+    () => this.precisedValue() <= this.minScale(),
   );
   protected readonly plusDisabled = computed(
-    () => this.fineControls().plus.disabled || this.precisedValue() >= this.maxScale(),
+    () => this.precisedValue() >= this.maxScale(),
   );
 
   private readonly preset = computed(
-    () => SIZE_PRESETS[getVisualFrameDiameter(this.hostView(), this.windowWidth())],
+    () => SIZE_PRESETS[getVisualFrameDiameter(this.windowWidth())],
   );
   protected readonly frameDiameter = computed(() => this.preset().frameDiameter);
   protected readonly scalledDiameter = computed(() => this.frameDiameter() * this.scaleFactor);
@@ -296,8 +250,7 @@ export class ArcSlider {
     event.preventDefault();
     event.stopPropagation();
 
-    if (this.hostView() === 'controls-view' && !this.isActive()) {
-      this.requestManualMode();
+    if (!this.isActive()) {
       return;
     }
     if (this.usingFineControls()) {
@@ -324,8 +277,7 @@ export class ArcSlider {
   }
 
   protected onControlBtn(btn: 'minus' | 'plus'): void {
-    if (this.hostView() === 'controls-view' && !this.isActive()) {
-      this.requestManualMode();
+    if (!this.isActive()) {
       return;
     }
     if (btn === 'minus' ? this.minusDisabled() : this.plusDisabled()) {
@@ -342,15 +294,6 @@ export class ArcSlider {
     this.powerBtnEvent.emit();
   }
 
-  protected onModeBtn(mode: string): void {
-    this.changeModeEvent.emit(mode);
-  }
-
-  private requestManualMode(): void {
-    if (this.relayMode() === 'SCHEDULE') {
-      this.changeModeEvent.emit('MANUAL');
-    }
-  }
 
   private emitValue(value: number): void {
     this.arcSliderOutput.emit({ value, color: OUTPUT_COLOR });
@@ -369,10 +312,10 @@ export class ArcSlider {
     let y = (event.clientY - rect.top) * ratio;
     const center = this.geometry().center;
 
-    if (this.isModal() && this.windowWidth() < SMALL_MODAL_MAX_WIDTH) {
-      y *= 0.75;
-      x += (center - x) * 0.37;
-    }
+    // if (this.isModal() && this.windowWidth() < SMALL_MODAL_MAX_WIDTH) {
+    //   y *= 0.75;
+    //   x += (center - x) * 0.37;
+    // }
 
     const angle =
       getAngleFromCartesianToMyCanvas({ x, y, a: center, b: center }, TOP, MAX_CIRCLE_DEGREES) -

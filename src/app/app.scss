@@ -1,18 +1,94 @@
 .main-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
   padding: 1rem;
   gap: 1rem;
 }
 
+@media (min-width: 768px) {
+  .main-container {
+    grid-template-columns: auto 1fr;
+  }
+}
+
 .slider-container {
+  column-span: 1/1;
   display: flex;
   align-items: center;
   justify-content: center;
   width: fit-content;
-  background-color: whitesmoke;
+  background-color: white;
   border-radius: 2rem;
   padding: 1.5rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+
+.controls-container {
+  column-span: 1/1;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: fit-content;
+  background-color: white;
+  border-radius: 2rem;
+  padding: 1.5rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+
+.precision-field {
+  display: flex;
+  gap: 1rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+
+  legend {
+    padding: 0;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.reading-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.colors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.colors-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.color-circle {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-color: #212121;
+    box-shadow: 0 0 0 2px whitesmoke inset;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #212121;
+    outline-offset: 2px;
+  }
 }

@@ -1,10 +1,9 @@
 @let info = gaugeInfo();
 @let opts = options();
-@let humidity = info.thermostatHumidityControl;
 @let size = frameSize();
 @let diameter = scalledDiameter();
 
-<div [class]="['component-container', hostView()]">
+<div [class]="['component-container']">
   <div
     [id]="'arc-' + gaugeId()"
     class="arc-slider"
@@ -14,7 +13,7 @@
   <div class="controls-info">
     <div
       class="target-value-container"
-      [style]="{ transform: 'translateY(' + (humidity ? 50 : 30) + 'px)' }"
+      [style]="{ transform: 'translateY(' + 30 + 'px)' }"
     >
       <div class="main-target-container">
         @if (isActive()) {
@@ -36,39 +35,6 @@
           >{{ isActive() ? precisedValue() + opts.symbol : 'Off' }}</span
         >
       </div>
-      @if (humidity) {
-        <div
-          class="thermostat-humidity-control-target"
-          [style]="{ transform: 'translateY(' + (size !== 'L' ? 6 : 0) + 'px)' }"
-        >
-          <span class="icon-humidifying arc-slider-target-primary"></span>
-          @if (humidity.limited) {
-            <div class="value-container">
-              <span
-                class="value regular-text warn-color"
-                [class]="size === 'S' ? 's-size-text' : 'm-size-text'"
-              >
-                Limited
-              </span>
-            </div>
-          } @else {
-            <div class="value-container">
-              <span
-                class="sign regular-text text-med-color"
-                [class]="size === 'S' ? 's-size-text' : 'm-size-text'"
-              >
-                {{ humidity.signLabel }}
-              </span>
-              <span
-                class="value regular-text text-med-color"
-                [class]="size === 'S' ? 'xs-size-text' : 's-size-text'"
-              >
-                {{ humidity.setPointLabel }}
-              </span>
-            </div>
-          }
-        </div>
-      }
     </div>
   </div>
 
@@ -97,18 +63,6 @@
     ></canvas>
   </div>
 
-  <!--UNTIL-->
-  <!-- @if (hostView() === 'controls-view' && until()) {
-    <div class="duration-label-container">
-      <span
-        class="regular-text text-med-color"
-        [class]="size === 'S' ? 'xxs-size-text' : 'xs-size-text'"
-        [style]="{ transform: 'translateY(' + (humidity ? 40 : 20) + 'px)' }"
-        >{{ until() }}</span
-      >
-    </div>
-  } -->
-
   <div class="control-btns">
     <!--MINUS-->
     <div
@@ -130,23 +84,6 @@
       </button>
     </div>
 
-    <!--SCHEDULE-->
-    <!-- @if (hostView() === 'controls-view') {
-      <div
-        class="mode-btn schedule"
-        [style]="{
-          transform: 'translate(12px, -' + diameter * (size !== 'M' ? 0.35 : 0.33) + 'px)',
-        }"
-      >
-        <app-button
-          name="app-btn"
-          icon="schedule-btn"
-          [fontSize]="size === 'L' ? '38px' : size === 'M' ? '36px' : '32px'"
-          [color]="relayMode() === 'SCHEDULE' && !boostOn() ? modeBtnsColor() : 'accent'"
-          (pointerdown)="onModeBtn('SCHEDULE')"
-        ></app-button>
-      </div>
-    } -->
 
     <!--POWER-->
     <div
@@ -167,24 +104,6 @@
         </button>
       </div>
 
-    
-    <!--MANUAL-->
-    <!-- @if (hostView() === 'controls-view') {
-      <div
-        class="mode-btn manual"
-        [style]="{
-          transform: 'translate(-14px, -' + diameter * (size !== 'M' ? 0.345 : 0.325) + 'px)',
-        }"
-      >
-        <app-button
-          name="app-btn"
-          icon="manual-btn"
-          [fontSize]="size === 'L' ? '33px' : size === 'M' ? '31px' : '27px'"
-          [color]="relayMode() === 'MANUAL' && !boostOn() ? modeBtnsColor() : 'accent'"
-          (pointerdown)="onModeBtn('MANUAL')"
-        ></app-button>
-      </div>
-    } -->
     
     <!--PLUS-->
     <div

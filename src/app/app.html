@@ -2,15 +2,78 @@
   <div class="slider-container">
     <app-arc-slider
     hostView="controls-view"
-    [fineControls]="fineControls"
     [gaugeInfo]="displayData"
-    [options]="options"
+    [options]="options()"
     [baseColors]="baseColors"
     [isActive]="isActive()"
     (powerBtnEvent)="onPowerBtn()"
     ></app-arc-slider>
   </div>
   <div class="controls-container">
-    
+    <!--Precision field-->
+    <fieldset class="precision-field">
+      <legend>Precision</legend>
+      <label>
+        <input
+          type="radio"
+          name="precision"
+          value="0"
+          [checked]="options().precision === 0"
+          (change)="onPrecisionChange($event)"
+        />
+        Whole
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="precision"
+          value="1"
+          [checked]="options().precision === 1"
+          (change)="onPrecisionChange($event)"
+        />
+        Decimal
+      </label>
+    </fieldset>
+
+    <!--Current Control Value Reading field-->
+    <label class="reading-field">
+      Control reading
+      <input
+        type="number"
+        [min]="options().min"
+        [max]="options().max"
+        [step]="controlReadingStep()"
+        [value]="options().controlReadingValue"
+        (input)="onControlReadingChange($event)"
+      />
+    </label>
+
+    <!--Colors rows-->
+    <div class="colors">
+      <div class="colors-row" role="group" aria-label="Cold colors (start color)">
+        @for (color of coldColors; track color) {
+          <button
+            type="button"
+            class="color-circle"
+            [style.background-color]="color"
+            [attr.aria-label]="'Set start color ' + color"
+            [attr.aria-pressed]="color === selectedStartColor()"
+            (click)="updateColors({ startColor: color })"
+          ></button>
+        }
+      </div>
+      <div class="colors-row" role="group" aria-label="Warm colors (stop color)">
+        @for (color of warmColors; track color) {
+          <button
+            type="button"
+            class="color-circle"
+            [style.background-color]="color"
+            [attr.aria-label]="'Set stop color ' + color"
+            [attr.aria-pressed]="color === selectedStopColor()"
+            (click)="updateColors({ stopColor: color })"
+          ></button>
+        }
+      </div>
+    </div>
   </div>
 </div>
